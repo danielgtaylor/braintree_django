@@ -9,9 +9,13 @@ This module depends on the Braintree Python module, so please install it first.
 External Documentation
 ----------------------
 
- * http://www.braintreepaymentsolutions.com/gateway/transparent-redirect
- * http://www.braintreepaymentsolutions.com/gateway/python
- * http://www.braintreepaymentsolutions.com/gateway/python/docs/index.html
+ * [Transparent redirect][1]
+ * [Python module][2]
+ * [Python module API documentation][3]
+
+[1]: http://www.braintreepaymentsolutions.com/gateway/transparent-redirect
+[2]: http://www.braintreepaymentsolutions.com/gateway/python
+[3]: http://www.braintreepaymentsolutions.com/gateway/python/docs/index.html
 
 Simple Example
 --------------
@@ -73,3 +77,6 @@ Then, in your template rendering the form is easy:
         <button type="submit">Submit order</button>
     </form>
 
+License
+-------
+Braintree Django uses the MIT license. Please see the COPYING file for full details.
