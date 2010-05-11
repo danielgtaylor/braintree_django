@@ -35,12 +35,8 @@ Download and install the btdjango module, then create a form in one of your view
     BRAINTREE_PUBLIC_KEY = 'your_public_key'
     BRAINTREE_PRIVATE_KEY = 'your_private_key'
 
-    braintree.Configuration.configure(
-        BRAINTREE_ENV,
-        BRAINTREE_MERCHANT,
-        BRAINTREE_PUBLIC_KEY,
-        BRAINTREE_PRIVATE_KEY
-    )
+    # If you cannot install M2Crypto (e.g. AppEngine):
+    BRAINTREE_UNSAFE_SSL = True
 
 Next, create a view to use one of the transparent redirect forms:
 
