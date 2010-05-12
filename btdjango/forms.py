@@ -46,11 +46,12 @@ class BraintreeForm(forms.Form):
             >>> form.generate_tr_data()
         
     """
+    tr_type = ""
+    
     # Order of fields matters so we used an ordered dictionary
     tr_fields = OrderedDict()
     tr_labels = {}
     tr_protected = {}
-    tr_type = ""
 
     # A list of fields that should be boolean (checkbox) options
     tr_boolean_fields = []
@@ -209,6 +210,7 @@ class TransactionForm(BraintreeForm):
     """
         A form to enter transaction details.
     """
+    tr_type = "Transaction"
     tr_fields = OrderedDict([
         ("transaction", OrderedDict([
             ("amount", None),
@@ -290,13 +292,13 @@ class TransactionForm(BraintreeForm):
         "transaction[options][add_billing_address_to_payment_method]",
         "transaction[options][store_shipping_address_in_vault]",
     ]
-    tr_type = "Transaction"
     
 
 class CreditCardForm(BraintreeForm):
     """
         A form to enter a new credit card.
     """
+    tr_type = "CreditCard"
     tr_fields = OrderedDict([
         ("credit_card", OrderedDict([
             ("cardholder_name", None),
@@ -326,5 +328,4 @@ class CreditCardForm(BraintreeForm):
             "customer_id": None,
         },
     }
-    tr_type = "CreditCard"
 
