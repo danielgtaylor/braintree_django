@@ -55,6 +55,7 @@ Next, create a view to use one of the transparent redirect forms:
         # Remove items we don't need
         myform.remove_section("transaction[shipping_address]")
         myform.remove_section("transaction[amount]")
+        myform.remove_section("transaction[options]")
 
         # Set fields we want passed along
         myform.tr_fields["transaction"]["amount"] = "19.99"
