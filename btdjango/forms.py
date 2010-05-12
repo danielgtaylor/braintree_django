@@ -53,9 +53,7 @@ class BraintreeForm(forms.Form):
     tr_type = ""
 
     # A list of fields that should be boolean (checkbox) options
-    tr_boolean_fields = [
-        "transaction[options][store_in_vault]",
-    ]
+    tr_boolean_fields = []
     
     @classmethod
     def get_result(cls, request):
@@ -287,6 +285,11 @@ class TransactionForm(BraintreeForm):
             },
         },
     }
+    tr_boolean_fields = [
+        "transaction[options][store_in_vault]",
+        "transaction[options][add_billing_address_to_payment_method]",
+        "transaction[options][store_shipping_address_in_vault]",
+    ]
     tr_type = "Transaction"
     
 
