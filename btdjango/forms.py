@@ -300,7 +300,58 @@ class TransactionForm(BraintreeForm):
         "transaction[options][add_billing_address_to_payment_method]",
         "transaction[options][store_shipping_address_in_vault]",
     ]
-    
+
+class CustomerForm(BraintreeForm):
+    """
+        A form to enter a new customer.
+    """
+    tr_type = "Customer"
+    tr_fields = OrderedDict([
+        ("customer", OrderedDict([
+            ("first_name", None),
+            ("last_name", None),
+            ("company", None),
+            ("email", None),
+            ("phone", None),
+            ("fax", None),
+            ("website", None),
+            ("credit_card", OrderedDict([
+                ("cardholder_name", None),
+                ("number", None),
+                ("expiration_date", None),
+                ("cvv", None),
+                ("billing_address", OrderedDict([
+                    ("first_name", None),
+                    ("last_name", None),
+                    ("company", None),
+                    ("street_address", None),
+                    ("extended_address", None),
+                    ("locality", None),
+                    ("region", None),
+                    ("postal_code", None),
+                    ("country_name", None)]),
+                )]),
+            )]),
+        ),
+    ])
+    tr_labels = {
+        "customer": {
+            "credit_card": {
+                "cvv": "CVV",
+            },
+        },
+    }
+    tr_protected = {
+        "customer": {
+            "id": None,
+            "credit_card": {
+                "token": None,
+                "options": {
+                    "verify_card": None,
+                },
+            },
+        },
+    }
 
 class CreditCardForm(BraintreeForm):
     """
@@ -334,6 +385,10 @@ class CreditCardForm(BraintreeForm):
     tr_protected = {
         "credit_card": {
             "customer_id": None,
+            "token": None,
+            "options": {
+                "verify_card": None,
+            },
         },
     }
 
