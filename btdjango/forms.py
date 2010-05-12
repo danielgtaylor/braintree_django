@@ -44,6 +44,14 @@ class BraintreeForm(forms.Form):
         special data via:
 
             >>> form.generate_tr_data()
+
+        To get the location to post data to you can use the action property in
+        your templates:
+
+            <form action="{{ form.action }}" method="POST">
+                {{ form.as_table }}
+                <button type="submit">Submit order</button>
+            </form>
         
     """
     tr_type = ""

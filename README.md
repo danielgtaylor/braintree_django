@@ -68,7 +68,7 @@ Next, create a view to use one of the transparent redirect forms:
 
 Then, in your template rendering the form is easy:
 
-    <form action={{ form.action }}" method="POST">
+    <form action="{{ form.action }}" method="POST">
         {{ form.as_table }}
         <button type="submit">Submit order</button>
     </form>
