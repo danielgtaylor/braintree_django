@@ -8,7 +8,7 @@ import braintree
 
 from django.conf import settings
 
-VERSION = "1.0"
+VERSION = "1.1"
 
 if not hasattr(braintree.Configuration, "merchant_id"):
     braintree.Configuration.configure(
@@ -18,6 +18,6 @@ if not hasattr(braintree.Configuration, "merchant_id"):
         getattr(settings, "BRAINTREE_PRIVATE_KEY", ""),
     )
 
-    if getattr(settings, "BRAINTREE_UNSAFE", False):
+    if getattr(settings, "BRAINTREE_UNSAFE_SSL", False):
         braintree.Configuration.use_unsafe_ssl = True
 
