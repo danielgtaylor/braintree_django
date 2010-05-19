@@ -59,6 +59,7 @@ class BraintreeForm(forms.Form):
     # Order of fields matters so we used an ordered dictionary
     tr_fields = OrderedDict()
     tr_labels = {}
+    tr_help = {}
     tr_protected = {}
 
     # A list of fields that should be boolean (checkbox) options
@@ -103,6 +104,7 @@ class BraintreeForm(forms.Form):
         # This is required because of the strange naming scheme that uses
         # characters not supported in Python variable names.
         labels = self._flatten_dictionary(self.tr_labels)
+        helptext = self._flatten_dictionary(self.tr_help)
         for key, value in self._flatten_dictionary(self.tr_fields).items():
             if key in labels:
                 label = labels[key]
@@ -115,7 +117,10 @@ class BraintreeForm(forms.Form):
                 if boolfield == key:
                     # A checkbox MUST set value="true" for Braintree to pick
                     # it up properly, refer to Braintree ticket #26438
-                    field = forms.BooleanField(label=label, required=False, widget=widgets.CheckboxInput(attrs={"checked": True, "value": "true"}))
+                    field = forms.BooleanField(label=label, required=False, widget=widgets.CheckboxInput(attrs={"checked": True, "value": "true", "class": "checkbox"}))
+
+            if key in helptext:
+                field.help_text = helptext[key]
                 
             self.fields[key] = field
 
@@ -278,6 +283,13 @@ class TransactionForm(BraintreeForm):
             },
         },
     }
+    tr_help = {
+        "transaction": {
+            "credit_card": {
+                "expiration_date": "The expiration date in MM/YY format",
+            },
+        },
+    }
     tr_protected = {
         "transaction": {
             "type": None,
@@ -341,6 +353,13 @@ class CustomerForm(BraintreeForm):
             },
         },
     }
+    tr_help = {
+        "customer": {
+            "credit_card": {
+                "expiration_date": "The expiration date in MM/YY format",
+            },
+        },
+    }
     tr_protected = {
         "customer": {
             "id": None,
@@ -380,6 +399,11 @@ class CreditCardForm(BraintreeForm):
     tr_labels = {
         "credit_card": {
             "cvv": "CVV",
+        },
+    }
+    tr_help = {
+        "credit_card": {
+            "expiration_date": "The expiration date in MM/YY format",
         },
     }
     tr_protected = {
