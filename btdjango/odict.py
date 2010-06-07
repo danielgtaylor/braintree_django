@@ -295,7 +295,11 @@ class OrderedDict(dict):
             sources.append(kwargs.iteritems())
         for iterable in sources:
             for key, val in iterable:
-                self[key] = val
+                if (self.has_key(key) and isinstance(val, dict) 
+                        and isinstance(self[key], dict)):
+                    self[key].update(val)
+                else:
+                    self[key] = val
 
     def values(self):
         return map(self.get, self._keys)
@@ -326,3 +330,4 @@ class OrderedDict(dict):
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
+
