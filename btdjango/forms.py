@@ -10,9 +10,11 @@
 import braintree
 
 from django import forms
+from django.forms.util import ErrorList
 from django.forms import widgets
 
 from odict import OrderedDict
+from braintree.error_result import ErrorResult
 
 class BraintreeForm(forms.Form):
     """
@@ -90,13 +92,15 @@ class BraintreeForm(forms.Form):
 
         # Create the form instance, with initial data if it was given
         if result:
+            self.result = result
             data = self._flatten_dictionary(result.params)
 
             super(BraintreeForm, self).__init__(data, *args, **kwargs)
 
-            # Are there any errors wer should display?
+            # Are there any errors we should display?
             errors = self._flatten_errors(result.errors.errors.data)
             self.errors.update(errors)
+
         else:
             super(BraintreeForm, self).__init__(*args, **kwargs)
 
@@ -169,9 +173,9 @@ class BraintreeForm(forms.Form):
                 data.update(self._flatten_errors(val, full_key))
             elif key == "errors":
                 for error in val:
-                    data[full_key + "[" + error["attribute"] + "]"] = error["message"]
+                    data[full_key + "[" + error["attribute"] + "]"] = [error["message"]]
             else:
-                data[full_key] = val
+                data[full_key] = [val]
         return data
 
     def _remove_none(self, data):
@@ -210,6 +214,10 @@ class BraintreeForm(forms.Form):
         for key in self.fields.keys():
             if key.startswith(section):
                 del self.fields[key]
+
+    def clean(self):
+        if isinstance(self.result, ErrorResult):
+            raise forms.ValidationError(u"Error Processing Credit Card: %s" % self.result.transaction.processor_response_text)
 
     @property
     def action(self):
@@ -415,4 +423,5 @@ class CreditCardForm(BraintreeForm):
             },
         },
     }
+
 
