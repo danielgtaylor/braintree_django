@@ -16,6 +16,7 @@ from django.forms import widgets
 from odict import OrderedDict
 from copy import deepcopy
 from braintree.error_result import ErrorResult
+from braintree.exceptions.not_found_error import NotFoundError
 
 class BraintreeForm(forms.Form):
     """
@@ -83,7 +84,7 @@ class BraintreeForm(forms.Form):
         """
         try:
             result = getattr(braintree, cls.tr_type).confirm_transparent_redirect(request.META["QUERY_STRING"])
-        except KeyError:
+        except (KeyError, NotFoundError):
             result = None
 
         return result
