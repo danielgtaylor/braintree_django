@@ -282,7 +282,10 @@ class OrderedDict(dict):
             self._keys.append(key)
         dict.setdefault(self, key, default)
 
-    def update(self, *args, **kwargs):
+    def _update(self, *args, **kwargs):
+        recursive = kwargs.get('recursive', False)
+        kwargs = kwargs.get('kwargs', {})
+        
         sources = []
         if len(args) == 1:
             if hasattr(args[0], 'iteritems'):
@@ -295,11 +298,21 @@ class OrderedDict(dict):
             sources.append(kwargs.iteritems())
         for iterable in sources:
             for key, val in iterable:
-                if (self.has_key(key) and isinstance(val, dict) 
+                if (self.has_key(key) and recursive 
+                        and isinstance(val, dict) 
                         and isinstance(self[key], dict)):
-                    self[key].update(val)
+                    if hasattr(self[key], "recursive_update"):
+                        self[key].recursive_update(val)
+                    else:
+                        self[key].update(val)
                 else:
                     self[key] = val
+
+    def update(self, *args, **kwargs):
+        return self._update(*args, kwargs=kwargs)
+    
+    def recursive_update(self, *args, **kwargs):
+        return self._update(*args, kwargs=kwargs, recursive=True)
 
     def values(self):
         return map(self.get, self._keys)
