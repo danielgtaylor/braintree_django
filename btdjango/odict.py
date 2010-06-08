@@ -309,10 +309,10 @@ class OrderedDict(dict):
                     self[key] = val
 
     def update(self, *args, **kwargs):
-        return self._update(*args, kwargs=kwargs)
+        return self._update(kwargs=kwargs, *args)
     
     def recursive_update(self, *args, **kwargs):
-        return self._update(*args, kwargs=kwargs, recursive=True)
+        return self._update(kwargs=kwargs, recursive=True, *args)
 
     def values(self):
         return map(self.get, self._keys)
