@@ -14,6 +14,7 @@ from django.forms.util import ErrorList
 from django.forms import widgets
 
 from odict import OrderedDict
+from copy import deepcopy
 from braintree.error_result import ErrorResult
 
 class BraintreeForm(forms.Form):
@@ -109,7 +110,7 @@ class BraintreeForm(forms.Form):
         # characters not supported in Python variable names.
         labels = self._flatten_dictionary(self.tr_labels)
         helptext = self._flatten_dictionary(self.tr_help)
-        for key, value in self._flatten_dictionary(self.tr_fields).items():
+        for key in self._flatten_dictionary(self.tr_fields).keys():
             if key in labels:
                 label = labels[key]
             else:
@@ -117,11 +118,10 @@ class BraintreeForm(forms.Form):
 
             field = forms.CharField(label=label, required=False)
             
-            for boolfield in self.tr_boolean_fields:
-                if boolfield == key:
-                    # A checkbox MUST set value="true" for Braintree to pick
-                    # it up properly, refer to Braintree ticket #26438
-                    field = forms.BooleanField(label=label, required=False, widget=widgets.CheckboxInput(attrs={"checked": True, "value": "true", "class": "checkbox"}))
+            if key in self.tr_boolean_fields:
+                # A checkbox MUST set value="true" for Braintree to pick
+                # it up properly, refer to Braintree ticket #26438
+                field = forms.BooleanField(label=label, required=False, widget=widgets.CheckboxInput(attrs={"checked": True, "value": "true", "class": "checkbox"}))
 
             if key in helptext:
                 field.help_text = helptext[key]
@@ -194,8 +194,13 @@ class BraintreeForm(forms.Form):
             render and submit the form to Braintree. This MUST be called
             prior to rendering the form!
         """
-        tr_data = self.tr_fields.copy()
-        tr_data.update(self.tr_protected)
+        tr_data = deepcopy(self.tr_fields)
+        
+        if self._errors:
+            tr_data.update(self.tr_protected)
+        else:
+            tr_data.recursive_update(self.tr_protected)
+            
         self._remove_none(tr_data)
 
         if hasattr(getattr(braintree, self.tr_type), "tr_data_for_sale"):
@@ -216,7 +221,7 @@ class BraintreeForm(forms.Form):
                 del self.fields[key]
 
     def clean(self):
-        if isinstance(self.result, ErrorResult):
+        if isinstance(self.result, ErrorResult) and self.result.transaction:
             raise forms.ValidationError(u"Error Processing Credit Card: %s" % self.result.transaction.processor_response_text)
 
     @property
