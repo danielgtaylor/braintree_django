@@ -8,7 +8,7 @@ import braintree
 
 from django.conf import settings
 
-VERSION = "1.2"
+VERSION = "1.3"
 
 if not hasattr(braintree.Configuration, "merchant_id"):
     braintree.Configuration.configure(

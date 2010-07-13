@@ -1,5 +1,5 @@
-Braintree Django Module
-=======================
+Braintree Django Module 1.3
+===========================
 This module provides an easy to use interface to Braintree using Django's built-in form system to allow Django developers to easily make use of the Braintree transparent redirect functionality to help with PCI DSS compliance issues.
 
 The btdjango module supports all documented fields in the official transparent redirect documentation. You can selectively turn on/off fields as required by your use scenario (for example, hiding the shipping address in the transaction form).

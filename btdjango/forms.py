@@ -8,6 +8,7 @@
 """
 
 import braintree
+import datetime
 
 from django import forms
 from django.forms.util import ErrorList
@@ -83,7 +84,7 @@ class BraintreeForm(forms.Form):
             the HTTP query string.
         """
         try:
-            result = getattr(braintree, cls.tr_type).confirm_transparent_redirect(request.META["QUERY_STRING"])
+            result = braintree.TransparentRedirect.confirm(request.META["QUERY_STRING"])
         except (KeyError, NotFoundError):
             result = None
 
@@ -116,13 +117,20 @@ class BraintreeForm(forms.Form):
                 label = labels[key]
             else:
                 label = key.split("[")[-1].strip("]").replace("_", " ").title()
-
-            field = forms.CharField(label=label, required=False)
             
             if key in self.tr_boolean_fields:
                 # A checkbox MUST set value="true" for Braintree to pick
                 # it up properly, refer to Braintree ticket #26438
                 field = forms.BooleanField(label=label, required=False, widget=widgets.CheckboxInput(attrs={"checked": True, "value": "true", "class": "checkbox"}))
+            elif key.endswith("[expiration_month]"):
+                # Month selection should be a simple dropdown
+                field = forms.ChoiceField(choices=[(x,x) for x in range(1, 13)], required=False)
+            elif key.endswith("[expiration_year]"):
+                # Year selection should be a simple dropdown
+                year = datetime.date.today().year
+                field = forms.ChoiceField(choices=[(x,x) for x in range(year, year + 16)], required=False)
+            else:
+                field = forms.CharField(label=label, required=False)
 
             if key in helptext:
                 field.help_text = helptext[key]
@@ -231,7 +239,7 @@ class BraintreeForm(forms.Form):
             Get the location to post data to. Use this property in your
             templates, e.g. <form action="{{ form.action }}" method="post">.
         """
-        return getattr(braintree, self.tr_type).transparent_redirect_create_url()
+        return braintree.TransparentRedirect.url()
 
 class TransactionForm(BraintreeForm):
     """
@@ -253,7 +261,8 @@ class TransactionForm(BraintreeForm):
             ("credit_card", OrderedDict([
                 ("cardholder_name", None),
                 ("number", None),
-                ("expiration_date", None),
+                ("expiration_month", None),
+                ("expiration_year", None),
                 ("cvv", None)]),
             ),
             ("billing", OrderedDict([
@@ -297,13 +306,6 @@ class TransactionForm(BraintreeForm):
             },
         },
     }
-    tr_help = {
-        "transaction": {
-            "credit_card": {
-                "expiration_date": "The expiration date in MM/YY format",
-            },
-        },
-    }
     tr_protected = {
         "transaction": {
             "type": None,
@@ -344,7 +346,8 @@ class CustomerForm(BraintreeForm):
             ("credit_card", OrderedDict([
                 ("cardholder_name", None),
                 ("number", None),
-                ("expiration_date", None),
+                ("expiration_month", None),
+                ("expiration_year", None),
                 ("cvv", None),
                 ("billing_address", OrderedDict([
                     ("first_name", None),
@@ -364,13 +367,6 @@ class CustomerForm(BraintreeForm):
         "customer": {
             "credit_card": {
                 "cvv": "CVV",
-            },
-        },
-    }
-    tr_help = {
-        "customer": {
-            "credit_card": {
-                "expiration_date": "The expiration date in MM/YY format",
             },
         },
     }
@@ -395,7 +391,8 @@ class CreditCardForm(BraintreeForm):
         ("credit_card", OrderedDict([
             ("cardholder_name", None),
             ("number", None),
-            ("expiration_date", None),
+            ("expiration_month", None),
+            ("expiration_year", None),
             ("cvv", None),
             ("billing_address", OrderedDict([
                 ("first_name", None),
@@ -413,11 +410,6 @@ class CreditCardForm(BraintreeForm):
     tr_labels = {
         "credit_card": {
             "cvv": "CVV",
-        },
-    }
-    tr_help = {
-        "credit_card": {
-            "expiration_date": "The expiration date in MM/YY format",
         },
     }
     tr_protected = {
