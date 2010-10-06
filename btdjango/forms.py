@@ -124,11 +124,11 @@ class BraintreeForm(forms.Form):
                 field = forms.BooleanField(label=label, required=False, widget=widgets.CheckboxInput(attrs={"checked": True, "value": "true", "class": "checkbox"}))
             elif key.endswith("[expiration_month]"):
                 # Month selection should be a simple dropdown
-                field = forms.ChoiceField(choices=[(x,x) for x in range(1, 13)], required=False)
+                field = forms.ChoiceField(choices=[(x,x) for x in range(1, 13)], required=False, label=label)
             elif key.endswith("[expiration_year]"):
                 # Year selection should be a simple dropdown
                 year = datetime.date.today().year
-                field = forms.ChoiceField(choices=[(x,x) for x in range(year, year + 16)], required=False)
+                field = forms.ChoiceField(choices=[(x,x) for x in range(year, year + 16)], required=False, label=label)
             else:
                 field = forms.CharField(label=label, required=False)
 
@@ -298,6 +298,8 @@ class TransactionForm(BraintreeForm):
         "transaction": {
             "credit_card": {
                 "cvv": "CVV",
+                "expiration_month": "Expiration Month",
+                "expiration_year": "Expiration Year",
             },
             "options": {
                 "store_in_vault": "Save credit card",
