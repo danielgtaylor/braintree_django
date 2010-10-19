@@ -6,8 +6,6 @@
 
 from distutils.core import setup
 
-import btdjango
-
 setup(
     name='btdjango',
     version=btdjango.VERSION,
