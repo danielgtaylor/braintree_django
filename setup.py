@@ -8,7 +8,7 @@ from distutils.core import setup
 
 setup(
     name='btdjango',
-    version=btdjango.VERSION,
+    version="1.3",
     packages=['btdjango'],
 )
 
