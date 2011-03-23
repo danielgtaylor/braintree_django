@@ -1,13 +1,14 @@
-Braintree Django Module 1.3
-===========================
+Info
+====
+
 This module provides an easy to use interface to Braintree using Django's built-in form system to allow Django developers to easily make use of the Braintree transparent redirect functionality to help with PCI DSS compliance issues.
 
-The btdjango module supports all documented fields in the official transparent redirect documentation. You can selectively turn on/off fields as required by your use scenario (for example, hiding the shipping address in the transaction form).
+The django_braintree module supports all documented fields in the official transparent redirect documentation. You can selectively turn on/off fields as required by your use scenario (for example, hiding the shipping address in the transaction form).
 
 This module depends on the Braintree Python module, so please install it first.
 
-External Documentation
-----------------------
+Braintree API Documentation
+---------------------------
 
  * [Transparent redirect][1]
  * [Python module][2]
@@ -19,13 +20,13 @@ External Documentation
 
 Simple Example
 --------------
-Download and install the btdjango module, then create a form in one of your views. Start by installing the module in settings.py:
+Download and install the django_braintree module, then create a form in one of your views. Start by installing the module in settings.py:
 
     import braintree
 
     INSTALLED_APPS = [
         ...
-        "btdjango",
+        "django_braintree",
         ...
     ]
 
@@ -40,7 +41,7 @@ Download and install the btdjango module, then create a form in one of your view
 
 Next, create a view to use one of the transparent redirect forms:
 
-    from btdjango.forms import TransactionForm
+    from django_braintree.forms import TransactionForm
 
     def myview(request):
         result = TransactionForm.get_result(request)
@@ -76,4 +77,4 @@ Then, in your template rendering the form is easy:
 
 License
 -------
-Braintree Django uses the MIT license. Please see the COPYING file for full details.
+Django Braintree uses the MIT license. Please see the LICENSE file for full details.

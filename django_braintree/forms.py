@@ -1,23 +1,13 @@
-#!/usr/bin/env python
-
-"""
-    Braintree Payment Forms
-    =======================
-    An implementation of the Braintree transparent redirect system as native
-    Django forms that can easily be used in your own views and templates.
-"""
-
-import braintree
 import datetime
+from copy import deepcopy
 
 from django import forms
 from django.forms.util import ErrorList
 from django.forms import widgets
 
-from odict import OrderedDict
-from copy import deepcopy
-from braintree.error_result import ErrorResult
-from braintree.exceptions.not_found_error import NotFoundError
+import braintree
+
+from .odict import OrderedDict
 
 class BraintreeForm(forms.Form):
     """
@@ -85,7 +75,7 @@ class BraintreeForm(forms.Form):
         """
         try:
             result = braintree.TransparentRedirect.confirm(request.META["QUERY_STRING"])
-        except (KeyError, NotFoundError):
+        except (KeyError, braintree.exceptions.not_found_error.NotFoundError):
             result = None
 
         return result
@@ -230,7 +220,7 @@ class BraintreeForm(forms.Form):
                 del self.fields[key]
 
     def clean(self):
-        if isinstance(self.result, ErrorResult) and self.result.transaction:
+        if isinstance(self.result, braintree.error_result.ErrorResult) and self.result.transaction:
             raise forms.ValidationError(u"Error Processing Credit Card: %s" % self.result.transaction.processor_response_text)
 
     @property
