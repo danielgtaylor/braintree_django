@@ -1,7 +1,0 @@
-btdjango/__init__.py
-btdjango/forms.py
-btdjango/odict.py
-btdjango.egg-info/PKG-INFO
-btdjango.egg-info/SOURCES.txt
-btdjango.egg-info/dependency_links.txt
-btdjango.egg-info/top_level.txt
