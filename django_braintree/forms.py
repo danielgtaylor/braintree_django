@@ -108,6 +108,12 @@ class BraintreeForm(forms.Form):
             else:
                 label = key.split("[")[-1].strip("]").replace("_", " ").title()
             
+            #override for default field
+            if isinstance(self._flatten_dictionary(self.tr_fields)[key], forms.Field): 
+                self.fields[key] = self._flatten_dictionary(self.tr_fields)[key]
+                self.fields[key].label = label
+                continue
+            
             if key in self.tr_boolean_fields:
                 # A checkbox MUST set value="true" for Braintree to pick
                 # it up properly, refer to Braintree ticket #26438
