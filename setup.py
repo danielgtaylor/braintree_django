@@ -4,7 +4,6 @@ setup(
     name='django-braintree',
     version="1.3.1",
     description='Django app for interacting with the braintree API',
-    long_description = open("readme.md").read(),
     author='Daniel Taylor',
     author_email='dan@programmer-art.org',
     url = "https://github.com/danielgtaylor/braintree_django",
