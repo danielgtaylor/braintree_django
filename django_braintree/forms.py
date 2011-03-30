@@ -188,7 +188,7 @@ class BraintreeForm(forms.Form):
             Remove all items from a nested dictionary whose value is None.
         """
         for key, value in data.items():
-            if value is None:
+            if value is None or isinstance(value, forms.Field):
                 del data[key]
             if isinstance(value, dict):
                 self._remove_none(data[key])
