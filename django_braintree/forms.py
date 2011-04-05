@@ -82,6 +82,7 @@ class BraintreeForm(forms.Form):
 
     def __init__(self, result, *args, **kwargs):
         self.redirect_url = kwargs.pop("redirect_url", "")
+        self.update_id = kwargs.pop("update_id", None)
 
         # Create the form instance, with initial data if it was given
         if result:
@@ -208,8 +209,13 @@ class BraintreeForm(forms.Form):
             
         self._remove_none(tr_data)
 
-        if hasattr(getattr(braintree, self.tr_type), "tr_data_for_sale"):
+        if self.update_id:
+            tr_data.update({self.update_key:self.update_id})
+            signed = getattr(braintree, self.tr_type).tr_data_for_update(tr_data, self.redirect_url)
+        
+        elif hasattr(getattr(braintree, self.tr_type), "tr_data_for_sale"):
             signed = getattr(braintree, self.tr_type).tr_data_for_sale(tr_data, self.redirect_url)
+        
         else:
             signed = getattr(braintree, self.tr_type).tr_data_for_create(tr_data, self.redirect_url)
         
