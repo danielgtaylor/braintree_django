@@ -213,7 +213,7 @@ class BraintreeForm(forms.Form):
         else:
             signed = getattr(braintree, self.tr_type).tr_data_for_create(tr_data, self.redirect_url)
         
-        self.fields["tr_data"] = forms.CharField(initial=signed, widget=widgets.HiddenInput())
+        self.fields["tr_data"] = forms.CharField(widget=widgets.HiddenInput(widget_attrs=dict(value=signed)))
 
     def remove_section(self, section):
         """

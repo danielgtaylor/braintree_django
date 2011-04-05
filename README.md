@@ -18,8 +18,8 @@ Braintree API Documentation
 [2]: http://www.braintreepaymentsolutions.com/gateway/python
 [3]: http://www.braintreepaymentsolutions.com/gateway/python/docs/index.html
 
-Simple Example
---------------
+Example 1: Simple
+-----------------
 Download and install the django_braintree module, then create a form in one of your views. Start by installing the module in settings.py:
 
     import braintree
@@ -74,6 +74,76 @@ Then, in your template rendering the form is easy:
         {{ form.as_table }}
         <button type="submit">Submit order</button>
     </form>
+
+Example 2: Custom Form
+----------------------
+
+Creating a custom form like the one below provides an alternative to:
+
+    myform.remove_section("transaction[amount]")
+    myform.tr_fields["transaction"]["amount"] = "19.99"
+
+Follow steps shown in Example 1 above. In your Django application, create a
+forms.py module, and add the following to it:
+
+    from django_braintree.forms import BraintreeForm
+    from django_braintree.odict import OrderedDict
+
+    class ProtectedAmountForm(BraintreeForm):
+
+        tr_type = "Transaction"
+        tr_fields = OrderedDict([
+            ("transaction", OrderedDict([
+                ("customer", OrderedDict([
+                    ("first_name", None),
+                    ("last_name", None),
+                    ("email", None),
+                    ("phone", None),]),
+                ),
+                ("credit_card", OrderedDict([
+                    ("cardholder_name", None),
+                    ("number", None),
+                    ("expiration_month", None),
+                    ("expiration_year", None),
+                    ("cvv", None)]),
+                ),
+                ("billing", OrderedDict([
+                    ("postal_code", None),
+                    ("country_name", None)]),
+                ),
+            ])),
+        ])
+        tr_labels = {
+            "transaction": {
+                "credit_card": {
+                    "cvv": "CVV",
+                    "expiration_month": "Expiration Month",
+                    "expiration_year": "Expiration Year",
+                },
+            },
+        }
+        tr_protected = {
+            "transaction": {
+                "amount": None,
+                "type": None,
+                "order_id": None,
+                "customer_id": None,
+                "payment_method_token": None,
+                "customer": {
+                    "id": None,
+                },
+                "credit_card": {
+                    "token": None,
+                },
+                "options": {
+                    "store_in_vault": True
+                },
+            },
+        }
+
+        def __init__(self, amount, result=None, redirect_url=None, *args, **kwargs):
+            self.tr_protected["transaction"]["amount"] = amount
+            super(ProtectedAmountForm, self).__init__(result, redirect_url=redirect_url, *args, **kwargs)
 
 License
 -------
